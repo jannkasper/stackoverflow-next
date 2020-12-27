@@ -1,6 +1,7 @@
 const { validateUser, signup, authenticate, listUsers, search, find } = require('./controllers/users');
-const { loadComments, validate, createComment, removeComment } = require('./controllers/comments');
-const { validateQuestion, loadQuestions, createQuestion, showQuestion, listQuestions, listQuestionsByTags, listQuestionsByUser, removeQuestion} = require("./controllers/questions");
+const { validateQuestion, loadQuestions, createQuestion, removeQuestion, showQuestion, listQuestions, listQuestionsByTags, listQuestionsByUser } = require("./controllers/questions");
+const { validateAnswer, loadAnswers, createAnswer, removeAnswer } = require('./controllers/answers');
+const { validateComment, loadComments, createComment, removeComment } = require('./controllers/comments');
 
 const requireAuth = require('./middlewares/requireAuth');
 const questionAuth = require('./middlewares/questionAuth');
@@ -25,6 +26,17 @@ router.get('/questions', listQuestions);
 router.get('/questions/tag/:tags', listQuestionsByTags);
 router.get('/questions/user/:username', listQuestionsByUser);
 router.delete('/question/:question', [requireAuth, questionAuth], removeQuestion);
+
+//answers
+router.param('answer', loadAnswers);
+router.post('/answer/:question', [requireAuth, validateAnswer], createAnswer);
+router.delete('/answer/:question/:answer', [requireAuth, answerAuth], removeAnswer);
+
+//comments
+router.param('comment', loadComments);
+router.post('/comment/:question/:answer?', [requireAuth, validateComment], createComment);
+router.delete('/comment/:question/:comment', [requireAuth, commentAuth], removeComment);
+router.delete('/comment/:question/:answer/:comment', [requireAuth, commentAuth], removeComment);
 
 
 module.exports = (app) => {
