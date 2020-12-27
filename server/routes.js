@@ -2,11 +2,13 @@ const { validateUser, signup, authenticate, listUsers, search, find } = require(
 
 const router = require('express').Router();
 //authentication
-router.post('/signup', signup);
-router.post('/authenticate', authenticate);
+router.post('/signup', validateUser, signup);
+router.post('/authenticate', validateUser, authenticate);
 
-
-
+//users
+router.get('/users', listUsers);
+router.get('/users/:search', search);
+router.get('/user/:username', find);
 
 
 module.exports = (app) => {

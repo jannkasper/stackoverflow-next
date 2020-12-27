@@ -61,22 +61,106 @@ exports.signup = async (req, res) => {
     }
 };
 
-exports.authenticate = async() => {
+exports.authenticate = async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        const errors = result.array({ onlyFirstError: true });
+        return res.status(422).json({ errors });
+    }
+    try {
+        const { username, password } = req.body;
+        const user = await User.findOne({
+            username: username.toLowerCase()
+        });
+
+        if (!user) {
+            return res.status(403).json({
+                message: 'Wrong username or password.'
+            });
+        };
+
+        const passwordValid = verifyPassword(password, user.password);
+
+        if (passwordValid) {
+            const token = createToken(user);
+            const decodedToken = jwtDecode(token);
+            const expiresAt = decodedToken.exp;
+            const { username, role, id, created, profilePhoto } = user;
+            const userInfo = { username, role, id, created, profilePhoto };
+
+            res.json({
+                message: 'Authentication successful!',
+                token,
+                userInfo,
+                expiresAt
+            });
+        } else {
+            res.status(403).json({
+                message: 'Wrong username or password.'
+            });
+        }
+    } catch (error) {
+        return res.status(400).json({
+            message: 'Something went wrong.'
+        });
+    }
 
 }
 
-exports.listUsers = async() => {
-
+exports.listUsers = async (req, res, next) => {
+    try {
+        const { sortType = "-created" } = req.body;
+        const users = await User.find().sort(sortType);
+        res.json(users);
+    } catch (error) {
+        next(error);
+    }
 }
 
-exports.search = async() => {
-
+exports.search = async (req, res, next) => {
+    try {
+        const users = await User.find({ username: { $regex: req.params.search, $options: 'i' } });
+        res.json(users);
+    } catch (error) {
+        next(error);
+    }
 }
 
-exports.find = async() => {
-
+exports.find = async (req, res, next) => {
+    try {
+        const users = await User.findOne({username: req.params.username });
+        res.json(users);
+    } catch (error) {
+        next(error);
+    }
 }
 
 exports.validateUser = [
+    body("username")
+        .exists()
+        .trim()
+        .withMessage("is required")
 
-]
+        .notEmpty()
+        .withMessage("cannot be blank")
+
+        .isLength({ max: 16 })
+        .withMessage('must be at most 16 characters long')
+
+        .matches(/^[a-zA-Z0-9_-]+$/)
+        .withMessage('contains invalid characters'),
+
+    body('password')
+        .exists()
+        .trim()
+        .withMessage('is required')
+
+        .notEmpty()
+        .withMessage('cannot be blank')
+
+        .isLength({ min: 6 })
+        .withMessage('must be at least 6 characters long')
+
+        .isLength({ max: 50 })
+        .withMessage('must be at most 50 characters long')
+];
