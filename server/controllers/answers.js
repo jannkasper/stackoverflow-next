@@ -16,7 +16,7 @@ exports.loadAnswers = async (req, res, next, id) => {
 exports.createAnswer = async (req, res, next) => {
     const result = validationResult(req);
 
-    if (result.isEmpty()) {
+    if (!result.isEmpty()) {
         const errors = result.array({ onlyFirstError: true });
         return res.status(422).json({ errors });
     }
