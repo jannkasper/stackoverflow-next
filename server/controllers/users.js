@@ -7,8 +7,8 @@ const { createToken, hashPassword, verifyPassword } = require('../utils/authenti
 exports.signup = async (req, res) => {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        const error = result.array({onlyFirstError: true });
-        return res.status(422).json({ error });
+        const errors = result.array({onlyFirstError: true });
+        return res.status(422).json({ errors });
     }
 
     try {
@@ -79,7 +79,7 @@ exports.authenticate = async (req, res) => {
             });
         };
 
-        const passwordValid = verifyPassword(password, user.password);
+        const passwordValid = await verifyPassword(password, user.password);
 
         if (passwordValid) {
             const token = createToken(user);
