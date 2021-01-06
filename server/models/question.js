@@ -9,7 +9,7 @@ const questionSchema = new Schema({
     author: { type: Schema.Types.ObjectId, ref: "user", required: true },
     title: { type: String, required: true },
     text: { type: String, required: true },
-    tags: { type: String, required: true },
+    tags: [{ type: String, required: true }],
     score: { type: Number, default: 0 },
     votes: [voteSchema],
     comments: [commentSchema],

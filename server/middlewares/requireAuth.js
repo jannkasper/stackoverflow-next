@@ -9,7 +9,7 @@ const requireAuth = (req, res, next) => {
     }
 
     try {
-        const decodeToken = jwt.verify(token, config.jwt.secret, {
+        const decodeToken = jwt.verify(token.slice(7), config.jwt.secret, {
             algorithm: "HS256",
             expiresIn: config.jwt.expiry
         });
