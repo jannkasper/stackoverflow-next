@@ -5,7 +5,7 @@ import { publicFetch } from "../../util/fetcher";
 
 import Layout from "../../components/layout";
 import PageTitle from "../../components/page-title";
-// import SearchInput from "../../components/search-input";
+import SearchInput from "../../components/search-input";
 import UserList from "../../components/user-list";
 import UserItem from "../../components/user-list/user-item";
 import { Spinner } from "../../components/icons";
@@ -43,7 +43,14 @@ function UserPage() {
 
             <PageTitle title="Users" borderBottom={false} />
 
-            {/*<SearchInput />*/}
+            <SearchInput
+                placeholder="Search by user"
+                isLoading={loading}
+                autoFocus
+                autoComplete="off"
+                type="text"
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
 
             {!users && (
                 <div className="loading">
