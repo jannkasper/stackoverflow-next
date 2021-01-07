@@ -96,8 +96,7 @@ const HomePage = () => {
                            <QuestionSummary
                                id={id}
                                title={title}
-                               // TODO tags as Array
-                               tags={[tags]}
+                               tags={tags}
                                author={author}
                                createdTime={created}
                            >
