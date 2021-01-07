@@ -9,10 +9,10 @@ import DetailPageContainer from "../../components/detail-page-container";
 import PostWrapper from "../../components/post/post-wrapper";
 import PostVote from "../../components/post/post-vote";
 import PostSummary from "../../components/post/post-summary";
-// import CommentList from "../../components/post/comment-list";
-// import CommentItem from "../../components/post/comment-list/comment-item";
-// import AnswerContainer from "../../components/answer-container";
-// import AddAnswer from "../../components/add-answer";
+import CommentList from "../../components/post/comment-list";
+import CommentItem from "../../components/post/comment-list/comment-item";
+import AnswerContainer from "../../components/answer-container";
+import AddAnswer from "../../components/add-answer";
 import { Spinner } from "../../components/icons";
 
 const QuestionDetail = ({ questionId, title }) => {
@@ -46,7 +46,7 @@ const QuestionDetail = ({ questionId, title }) => {
         <Layout extra={false}>
             <Head>
                 <title>{title}</title>
-                <link rel="canonical" href={isClient && window.location.href}></link>
+                <link rel="canonical" href={isClient ? window.location.href : undefined}></link>
             </Head>
 
             <PageTitle title={title} button />
@@ -75,12 +75,81 @@ const QuestionDetail = ({ questionId, title }) => {
                         >
                             {question.text}
                         </PostSummary>
+                        <CommentList questionId={questionId} setQuestion={setQuestion}>
+                            {question.comments?.map(({ id, author, created, body }) => (
+                                <CommentItem
+                                    key={id}
+                                    commentId={id}
+                                    questionId={questionId}
+                                    author={author.username}
+                                    isOwner={author.username === question.author.username}
+                                    created={created}
+                                    setQuestion={setQuestion}
+                                >
+                                    {body}
+                                </CommentItem>
+                            ))}
+
+                        </CommentList>
                     </PostWrapper>
+
+                        {question.answers.length > 0 && (
+                            <AnswerContainer
+                                answersCount={question.answers.length}
+                                answerSortType={answerSortType}
+                                setAnswerSortType={setAnswerSortType}
+                            >
+                                {question.answers.sort(handleSorting()).map((answer) => (
+                                    <PostWrapper key={answer.id}>
+                                        <PostVote
+                                            score={answer.score}
+                                            votes={answer.votes}
+                                            answerId={answer.id}
+                                            questionId={questionId}
+                                            setQuestion={setQuestion}
+                                        />
+                                        <PostSummary
+                                            author={answer.author}
+                                            created={answer.created}
+                                            questionId={questionId}
+                                            answerId={answer.id}
+                                            setQuestion={setQuestion}
+                                        >
+                                            {answer.text}
+                                        </PostSummary>
+                                        <CommentList
+                                            questionId={questionId}
+                                            answerId={answer.id}
+                                            setQuestion={setQuestion}
+                                        >
+                                            {answer.comments.map(({ id, author, created, body }) => (
+                                                <CommentItem
+                                                    key={id}
+                                                    commentId={id}
+                                                    questionId={questionId}
+                                                    answerId={answer.id}
+                                                    author={author.username}
+                                                    isOwner={author.username === question.author.username}
+                                                    created={created}
+                                                    setQuestion={setQuestion}
+                                                >
+                                                    {body}
+                                                </CommentItem>
+                                            ))}
+                                        </CommentList>
+                                    </PostWrapper>
+                                ))}
+                            </AnswerContainer>
+                        )}
+
+                        <AddAnswer
+                            tags={question.tags}
+                            id={questionId}
+                            setQuestion={setQuestion}
+                        />
                     </>
                 )}
             </DetailPageContainer>
-
-
         </Layout>
     )
 

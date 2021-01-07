@@ -26,7 +26,7 @@ exports.createAnswer = async (req, res, next) => {
         const { text } = req.body;
         const question = await req.question.addAnswer(id, text);
 
-        res.status(201).json({ question });
+        res.status(201).json(question);
     } catch (error) {
         next(error);
     }
