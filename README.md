@@ -75,23 +75,23 @@ $ npm run test
 - Add Nodejs to buildpacks
 
 -
-    # Go into the repository
-    $ cd whatsapp-react-clone
-
-    # Heroku Setup
-    $ npm install -g heroku
-    $ heroku login
-    $ heroku git:remote -a your-app-name
-
-    # push subdirectory repository with subtree
-    $ git subtree push --prefix server heroku master
+      # Go into the repository
+      $ cd stackoverflow-next
+  
+      # Heroku Setup
+      $ npm install -g heroku
+      $ heroku login
+      $ heroku git:remote -a your-app-name
+  
+      # push subdirectory repository with subtree
+      $ git subtree push --prefix server heroku master
 
 #### Deploying Client App on Vercel
 
 - [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Fjannkasper%2Fstackoverflow-next&env=SITE_NAME)
 - Select client directory
-- Add heroku api url to SITE_NAME enviorement
-- Finally deploy client application
+- Add heroku api url to SITE_NAME environment
+- Finally, deploy client application
 
 
 ## :book: Directory Structure
